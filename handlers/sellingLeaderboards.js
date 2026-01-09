@@ -1,30 +1,62 @@
-export default async function sellingLeaderBoards(req, res) {
+import fetch from 'node-fetch';
+
+export async function sellingLeaderBoards(req, res) {
     const { question } = req.body;
 
-    if (!question) return res.status(400).json({ error: 'Bad Request', message: "Question feild is required" })
+    if (!question) {
+        return res.status(400).json({
+            error: 'Bad Request',
+            message: 'Question field is required'
+        });
+    }
 
     try {
-        const response = await fetch("https://router.huggingface.co/v1", {
-            method: "POST",
-            headers: {
-                Authorization: `Bearer ${process.env.HF_TOKEN}`,
-                "Content-Type": 'application/json',
-            },
-            body: JSON.stringify({
-                inputs: `Respond only in JSON format with Rank, Manga, Author, Episodes, Estimated Sales. Question ${question}`
-            })
-        })
-        const data = await response.json()
-        const aiText = data[0]?.generatedText || data.error || '';
+        const response = await fetch(
+            'https://router.huggingface.co/v1/chat/completions',
+            {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${process.env.HF_TOKEN}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    model: 'deepseek-ai/DeepSeek‑V3.2',
+                    messages: [
+                        {
+                            role: 'user',
+                            content: `Respond ONLY in JSON. Rank, Manga, Author, Episodes, Estimated Sales. Question: ${question}`
+                        }
+                    ]
+                })
 
+            }
+        );
+
+        const text = await response.text();
+
+        let data;
         try {
-            let jsonResponse = JSON.parse(aiText);
-        } catch (err) {
-            jsonResponse = { raw: aiText };
+            data = JSON.parse(text);
+        } catch {
+            console.error('RAW HF RESPONSE:', text);
+            return res.status(502).json({ error: 'Invalid JSON from HuggingFace', raw: text });
         }
-        res.json(jsonResponse);
+
+        const aiText = data.choices?.[0]?.message?.content;
+        if (!aiText) {
+            return res.status(502).json({ error: 'No AI response', raw: data });
+        }
+
+        let finalJson;
+        try {
+            finalJson = JSON.parse(aiText);
+        } catch {
+            finalJson = { raw: aiText };
+        }
+
+        res.json(finalJson);
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: err.message })
+        console.error('FETCH ERROR:', err);
+        res.status(500).json({ error: err.message });
     }
 }

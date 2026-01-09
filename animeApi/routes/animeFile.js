@@ -24,10 +24,11 @@
 
 // main();
 import express from 'express';
-import sellingLeaderBoards from '../../handlers/sellingLeaderboards.js';
+import { sellingLeaderBoards } from '../../handlers/sellingLeaderboards.js';
 
 const router = express.Router();
 
-router.use('/sellingLeaderBoards', sellingLeaderBoards)
+router.post('/sellingLeaderBoards', sellingLeaderBoards)
+console.log("Ran")
 
 export default router;
