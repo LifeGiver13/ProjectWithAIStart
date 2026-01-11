@@ -29,6 +29,11 @@ import { sellingLeaderBoards } from '../../handlers/sellingLeaderboards.js';
 const router = express.Router();
 
 router.post('/sellingLeaderBoards', sellingLeaderBoards)
+router.get("/protected", (req, res) => {
+    res.json({
+       message: "Running"
+    });
+});
 console.log("Ran")
 
 export default router;
