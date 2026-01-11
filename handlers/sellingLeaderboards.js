@@ -84,15 +84,15 @@ export async function sellingLeaderBoards(req, res) {
           rank: z.number(),
           manga: z.string(),
           author: z.string(),
-          chapters: z.number().optional(),
-          releasedDate: z.string().optional(),
-          estimatedSales: z.string().optional(),
+          chapters: z.number().optional().nullable(),
+          releasedDate: z.string().optional().nullable(),
+          estimatedSales: z.string().optional().nullable(),
         })
       ),
     });
 
     const response = await openai.responses.parse({
-      model: "gpt-4.1-mini",
+      model: "gpt-4o-mini",
       input: [
         {
           role: "system",
