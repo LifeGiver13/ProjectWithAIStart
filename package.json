@@ -4,9 +4,8 @@
   "type": "module",
  "scripts": {
     "start": "node server/index.js",
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "dev": "vite"
+   
   },
   "dependencies": {
     "cors": "^2.8.5",
