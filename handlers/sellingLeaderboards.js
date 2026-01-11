@@ -84,9 +84,9 @@ export async function sellingLeaderBoards(req, res) {
           rank: z.number(),
           manga: z.string(),
           author: z.string(),
-          chapters: z.number().optional().nullable(),
-          releasedDate: z.string().optional().nullable(),
-          estimatedSales: z.string().optional().nullable(),
+          chapters: z.number().nullable(),
+          releasedDate: z.string().nullable(),
+          estimatedSales: z.string().nullable(),
         })
       ),
     });
