@@ -12,8 +12,8 @@ app.use(cors({ origin: "*", credentials: true }));
 app.use(express.json());
 app.use('/api', animeData);
 
-app.listen(port, () => {
+if (process.env.RENDER === 'true' || process.env.VERCEL !== '1') {
+  app.listen(port, () => {
     console.log(`Server running on port ${port}`);
-});
-console.log("Go go")
-
+  });
+}

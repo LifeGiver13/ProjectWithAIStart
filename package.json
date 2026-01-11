@@ -2,8 +2,11 @@
   "name": "project",
   "version": "1.0.0",
   "type": "module",
-  "scripts": {
-    "start": "node index.js"
+ "scripts": {
+    "start": "node server/index.js",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
     "cors": "^2.8.5",
