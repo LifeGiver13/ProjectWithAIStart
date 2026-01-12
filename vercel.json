@@ -9,7 +9,7 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "api/routes/animeFile.js"
+      "dest": "api/index.js"
     }
   ]
 }
