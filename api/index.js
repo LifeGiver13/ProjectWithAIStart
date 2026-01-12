@@ -12,7 +12,6 @@ app.use(cors({ origin: "*", credentials: true }));
 app.use(express.json());
 app.use('/api', animeData);
 
-export const api = functions.https.onRequest(app);
 
 if (process.env.NODE_ENV !== "production") {
   const port = 3000;
