@@ -78,17 +78,18 @@ export async function sellingLeaderBoards(req, res) {
 
     const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-    const AnimeLeaderboardSchema = z.object({
-      rankings: z.array(
-        z.object({
+    const expectedStructure= z.object({
           rank: z.number(),
           manga: z.string(),
           author: z.string(),
           chapters: z.number().nullable(),
           releasedDate: z.string().nullable(),
           estimatedSales: z.string().nullable(),
+          imgUrl: z.string().nullable()
         })
-      ),
+
+    const AnimeLeaderboardSchema = z.object({
+      rankings: z.array(expectedStructure),
     });
 
     const response = await openai.responses.parse({
@@ -97,9 +98,7 @@ export async function sellingLeaderBoards(req, res) {
         {
           role: "system",
           content:
-            "You are a data extraction assistant. " +
-            "Return only factual data when possible. " +
-            "If unknown, use null. Do not add explanations.",
+            "You are a data extraction assistant. Return only factual data when possible. If unknown, use null. Do not add explanations and look for image url's from accurate sources",
         },
         {
           role: "user",
@@ -111,9 +110,22 @@ export async function sellingLeaderBoards(req, res) {
       },
     });
 
+      
+    if (response.refusal){
+      return res.status(403).json({
+        refused: true,
+        reason: response.refusal,
+      })
+    }
+
     const leaderboard = response.output_parsed;
 
-    return res.json(leaderboard);
+
+    return res.json({
+      refused:false,
+      data:leaderboard
+    });
+
   } catch (error) {
     console.error("OpenAI Error:", error);
     return res.status(500).json({
